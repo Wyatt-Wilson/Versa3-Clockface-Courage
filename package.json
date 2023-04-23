@@ -10,7 +10,7 @@
   "fitbit": {
     "appUUID": "64e5a13e-fc54-48b1-b263-c10d7ef5b104",
     "appType": "app",
-    "appDisplayName": "My First Clock",
+    "appDisplayName": "Courage the Cowardly Clock",
     "iconFile": "resources/icon.png",
     "wipeColor": "#ffffff",
     "requestedPermissions": ["access_heart_rate", "access_activity", "adjusted"],

@@ -15,6 +15,13 @@
   fill: seashell;
 }
 
+.battery {
+  font-family: "Colfax-Medium"; 
+  font-size: 13;
+  letter-spacing: -2;
+  fill: seashell;
+}
+
 .date-text {
   font-family: Seville;
   font-size: 22;

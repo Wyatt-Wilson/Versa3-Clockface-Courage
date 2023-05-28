@@ -1,5 +1,5 @@
 {
-  "name": "my-first-clock",
+  "name": "courage-the-cowardly-clock",
   "version": "0.1.0",
   "private": true,
   "license": "UNLICENSED",
@@ -8,12 +8,12 @@
     "@fitbit/sdk-cli": "^1.7.3"
   },
   "fitbit": {
-    "appUUID": "64e5a13e-fc54-48b1-b263-c10d7ef5b104",
-    "appType": "app",
+    "appUUID": "b028e7d7-71e0-4400-b163-d115c57480d6",
+    "appType": "clockface",
     "appDisplayName": "Courage the Cowardly Clock",
     "iconFile": "resources/icon.png",
     "wipeColor": "#ffffff",
-    "requestedPermissions": ["access_heart_rate", "access_activity", "adjusted"],
+    "requestedPermissions": ["access_heart_rate", "access_activity"],
     "buildTargets": [
       "atlas"
     ],

@@ -2,78 +2,44 @@ import clock from "clock";
 import document from "document";
 import { HeartRateSensor } from "heart-rate";
 import { today } from "user-activity";
-import { me as appbit } from "appbit";
 import { preferences } from "user-settings";
-import { week } from "user-activity";
 import { battery } from "power";
 
 ////////////////////////////////////////////////////////////////////
 ///   ui elements     
-
 // steps
-const uiSteps = document.getElementById("labelSteps"); //today.adjusted.steps;
+const uiSteps = document.getElementById("labelSteps");
 
 // cals
 const uiCals = document.getElementById("labelCals");
 
-// active zone minutes
-const uiDist = document.getElementById("labelDist"); //not currently in used
+// distance
+const uiDist = document.getElementById("labelDist");
 
 // heart rate
 const uiHeartRate = document.getElementById("labelHeartRate");
 
 ////////////////////////////////////////////////////////////////////
-///   debugging for general ui's
+///    Assigning values to corresponding stats
+function updateStats() {
+  uiSteps.text = `${today.adjusted.steps}`;
+  uiCals.text = `${today.adjusted.calories}`;
+  const dist = `${today.adjusted.distance}`;
+  dist /= 1609; //converting meters to miles
+  dist = dist.toFixed(2);
+  uiDist.text = dist;
+}
+
+////////////////////////////////////////////////////////////////////
+///    Heart rate
 if (HeartRateSensor) {
   const hrm = new HeartRateSensor();
   hrm.addEventListener("reading", () => {
-    uiHeartRate.text = `${hrm.heartRate}`; //implementation of heart rate text
+    uiHeartRate.text = `${hrm.heartRate}`; //constantly assigning the heart rate in real time
   });
   hrm.start();
 }
 
-if (appbit.permissions.granted("access_activity")) {
-   console.log(`${week.adjusted.activeZoneMinutes} AZM`);
-   console.log(`${today.adjusted.distance} Distance`);
-}
-if (appbit.permissions.granted("access_activity")) {
-  console.log(`${today.adjusted.steps} Steps`);
-  if (today.local.elevationGain !== undefined) {
-    console.log(`${today.adjusted.elevationGain} Floor(s)`);
-  }
-}
-console.log(Math.floor(battery.chargeLevel) + "%");
-////////////////////////////////////////////////////////////////////
-///    getting text to show for matching ui
-uiSteps.text = `${today.adjusted.steps}`;
-uiCals.text = `${today.adjusted.calories}`;
-const num = `${today.adjusted.distance}`;
-num /= 1609; //converting meters to miles
-num = num.toFixed(2);
-uiDist.text = num;
-
-////////////////////////////////////////////////////////////////////
-///   Getting battery pngs to laod
-const imgReplace = document.getElementById("batteryIcon");
-
-if(Math.floor(battery.chargeLevel) > 75){ //If battery % is greater than 75 display the appropriate battery.png and so on...
-  imgReplace.href = "icons/battery100.png";
-} else if(Math.floor(battery.chargeLevel) > 50){
-  imgReplace.href = "icons/battery75.png";
-} else if(Math.floor(battery.chargeLevel) > 25){
-  imgReplace.href = "icons/battery50.png";
-} else if(Math.floor(battery.chargeLevel) > 10){
-  imgReplace.href = "icons/battery25.png";
-} else if(Math.floor(battery.chargeLevel) > 0){
-  imgReplace.href = "icons/battery10.png";
-};
-
-if(battery.charging == true){
-  imgReplace.href = "icons/batteryCharge.png";
-}
-console.log("The charger " + (battery.charging ? "is" : "is not") + " connected");
-//console.log("The charger " + (charger.connected ? "is" : "is not") + " connected");
-  
 
 ////////////////////////////////////////////////////////////////////
 ///    default clock
@@ -89,7 +55,10 @@ clock.granularity = "minutes";
 // Get a handle on the <text> element
 const myLabel = document.getElementById("myLabel");
 
-// Update the <text> element every tick with the current time
+
+////////////////////////////////////////////////////////////////////
+///    tick event (for every tick, do the following below)
+// Update the <text> element every tick with the current time as well as other elements
 clock.ontick = (evt) => {
   let today = evt.date;
   let hours = today.getHours();
@@ -102,13 +71,30 @@ clock.ontick = (evt) => {
   }
   let mins = zeroPad(today.getMinutes());
   myLabel.text = `${hours}:${mins}`;
-}
+  
+  //    Getting battery pngs to load
+  const imgReplace = document.getElementById("batteryIcon");
+  if(battery.charging){ //use "charger.connected" if you want to see if a charger is connected in general (must import charger from power)
+    imgReplace.href = "icons/batteryCharge.png";
+  } else if(Math.floor(battery.chargeLevel) > 75){ //If battery % is greater than 75 then display the appropriate battery.png and so on...
+    imgReplace.href = "icons/battery100.png";
+  } else if(Math.floor(battery.chargeLevel) > 50){
+    imgReplace.href = "icons/battery75.png";
+  } else if(Math.floor(battery.chargeLevel) > 25){
+    imgReplace.href = "icons/battery50.png";
+  } else if(Math.floor(battery.chargeLevel) > 10){
+    imgReplace.href = "icons/battery25.png";
+  } else if(Math.floor(battery.chargeLevel) > 0){
+    imgReplace.href = "icons/battery10.png";
+  };
 
+  //    Continuously updating stats
+  updateStats();
+}
 
 ////////////////////////////////////////////////////////////////////
 ///    Months/Dates obtained from: https://github.com/netojoa/blog/blob/master/fitbit/my-first-clock-face-os5/app/index.js
-
-//let txtTime = document.getElementById("txtTime");
+///    This is another tick event, however, I have left it unchanged for clearer understanding
 let txtDate = document.getElementById("txtDate");
 
 clock.granularity = "seconds";
